@@ -1,0 +1,142 @@
+---
+title: 'Data 607 Assignment 1: Hearing Well Being Survey Data'
+author: "Wendy Romero"
+date: ''
+output:
+  html_document:
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+  '': default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE, message = FALSE, warning = FALSE)
+library(tidyverse)
+library(stringr)
+library(openintro)
+```
+
+
+## Introduction
+
+The Hearing Wellness Survey 2025 is a nationwide survey data set gathering insight into Indian residents’ readiness for a mobile hearing wellness app. This data set was obtained from Kaggle at https://www.kaggle.com/datasets/adharshinikumar/2025-hearing-wellness-survey.
+
+The data set includes questions pertaining to age, listening habits, hearing risks, barriers to hearing tests, interest in a hearing health app and features desired in a hearing test app.
+
+For the sake of this exercise, we will be focusing on survey takers' interest in a paid mobile hearing test app. We will focus in on the responses of survey takers to questions pertaining to interest in an app, paid or when payment is not mentioned. Then we will compare the number of survey takers interested in an app (when payment is not mentioned) to those interested once payment is brought up.  
+
+We will use the following libraries 
+
+-  The **stringr** library 
+-  The **tidyverse** library  
+-  The **openintro** library 
+
+
+
+To start we need to read in the data:
+
+```{r reading in data}
+data <- read_csv("Hearing_well-being_Survey_Report.csv")
+```
+
+
+## Exploring Data
+Before creating a data frame with a subset of columns from the original data set, we want to take a look at the data before any transformations. 
+
+```{r exploring data}
+glimpse(data)
+```
+
+## Unique Answers to Interest in Hearing App Question
+
+Continuing to explore our data, let us take a look at what the unique answers are to the Interest in Hearing App question. This will help us later. 
+
+
+```{r unique answers hearing app}
+unique_answers <- unique(data$Interest_in_Hearing_App)
+print(unique_answers)
+```
+
+## Unique Answers to Interest in Paid App Question
+
+Continuing to explore our data, let us take a look at what the unique answers are to the Paid Test App question. This will help us later.
+
+```{r unique answers paid app}
+unique_answers2 <- unique(data$Paid_App_Test_Interest)
+print(unique_answers2)
+```
+
+## Creating a Data Frame that Includes only Columns Having to do with App Questions
+
+Since the goal while working with this data set is to look more closely at the interest of survey takers in a paid application, we will create a data frame that includes only columns having to do with app questions.
+
+```{r dataframe}
+
+appdata <- data[, c("Interest_in_Hearing_App", 
+                      "Desired_App_Features", 
+                      "Paid_App_Test_Interest")]
+```
+
+
+## Exploring Data Frame
+
+We want to to ensure the data frame only includes the information we are interested in.
+
+```{r glimpse at data frame}
+glimpse(appdata)
+```
+
+
+## Survey Takers Interest in a Hearing App
+
+Now let us take a closer look at the survey takers who answered "Yes" when asked if they were interested in a hearing app. We need to count the occurrences of 'Yes' answers within Interest in Hearing app column. We saw earlier that there are two responses that include "Yes": the simple "Yes" and the ""Yes, that would be helpful" responses. We want to include both in our count. First we will return a vector where each element is the count for the corresponding row.
+
+Then we can get the total count across the entire column and print the total count. 
+
+```{r Interest in a hearing app }
+
+counts_per_row <- str_count(appdata$Interest_in_Hearing_App, "Yes")
+
+total_count <- sum(counts_per_row)
+
+print(total_count)
+```
+
+
+## Survey Takers Interest in a Paid Hearing App
+
+Now we will look at the number of survey takers that were interested in app even if they had to pay for it. For this we will take a count of those who answered "Yes" within the Paid App Test Interest column. As we saw earlier, the only response including a "Yes" is the "Yes, definitely" in the Paid App Test Interest column.
+
+```{r Interest in a Paid App }
+counts_per_row2 <- str_count(appdata$Paid_App_Test_Interest, "Yes")
+total_count2 <- sum(counts_per_row2)
+print(total_count2)
+```
+
+
+## Comparing the Number of Survey Takers Interested in a Paid App to Those Interested in an App in General 
+
+Now that we have the total count of the survey takers interested in a hearing app and the number of those survey takers who were interested in a paid app, we can get the ratio of those interested in a paid app to those interested in an app when paying for it is not mentioned.
+
+```{r ratio between paid and payment not mentioned}
+print(total_count2/total_count)
+```
+
+Now let us compare the number of survey takers interested in a paid mobile hearing test app to the number of overall survey takers.
+
+We will first count the number of overall responses by counting the number of rows of data, if there were any empty rows this would require a different fucntion.
+
+```{ratio overall}
+num_rows <- nrow(appdata)
+
+print(totalcount2/num_rows)
+```
+
+
+## Conclusion
+
+The goal of this exercise was to find out how many of those surveyed in The Hearing Wellness Survey 2025were interested in a paid mobile hearing loss test application. To do that we first extracted the number of people interested in an app when paying for it was not mentioned then compared that to the number of people interested in a paid app. Of the people surveyed interested in a hearing app, only around a third of people were interested in a paid app. Finally, comparing the number of survey takers interested in a paid mobile hearing test app to the number of overall survey takers, only a little over a tenth of those who took the survey were interested in a paid mobile hearing test app. 
+
+The survey could be extended with questions about app prices. While not many of the survey takers were interested in paying for an application, more research could be conducted about whether the price of an app changes their responses. 
+
