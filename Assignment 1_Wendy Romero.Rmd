@@ -37,7 +37,8 @@ We will use the following libraries
 To start we need to read in the data:
 
 ```{r reading in data}
-data <- read_csv("Hearing_well-being_Survey_Report.csv")
+url <-("https://raw.githubusercontent.com/WendyR20/DATA-607-Assignment-1/refs/heads/main/Hearing%20well-being%20Survey%20Report.csv")
+data <- read_csv(url)
 ```
 
 
