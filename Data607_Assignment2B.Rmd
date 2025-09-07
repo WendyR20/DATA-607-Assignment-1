@@ -1,0 +1,92 @@
+---
+title: "Data607_Assignment2B"
+author: "Wendy Romero"
+date: "2025-09-07"
+output: 
+  html_document:
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+  '': default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(DBI)
+library(RPostgres)
+library(dplyr)
+```
+
+## Introduction
+
+We will be loading an existing SQL database to R data frames. For security reasons my password was saved on my own computer in a .Renviron file and thus when called it will not exposed.
+
+We will use the following libraries 
+
+-  The **DBI** library 
+-  The **RPostgres** library  
+
+## Introduction
+
+```{r load data from posgres}
+con_1 <- dbCanConnect(RPostgres::Postgres(), 
+                      host="localhost", 
+                      port="5432",
+                      dbname="moviesurvey",
+                      user="postgres", 
+                      password=Sys.getenv("DB_PASSWORD"))
+```
+
+## Connecting to Our Database
+
+Now that we have verified we can connect to our database, let's do so:
+
+```{r check if we can load data from posgres}
+con <- dbConnect(RPostgres::Postgres(), 
+                      host="localhost", 
+                      port="5432",
+                      dbname="moviesurvey",
+                      user="postgres", 
+                      password=Sys.getenv("DB_PASSWORD"))
+
+con
+```
+
+
+## Exploring Data
+Before creating data frames let's explore and query our connected tables. 
+
+```{r exploring data}
+dbListTables(con)
+
+dbGetQuery(con, "SELECT * FROM movies")
+```
+
+## Database Tables to R Data Frames
+
+Let's load our database tables into data frames, we can then disconnect from the database.
+
+
+```{r load data into dataframes}
+df_movies  <- dbGetQuery(con, "SELECT * FROM movies")
+df_takers  <- dbGetQuery(con, "SELECT * FROM survey_takers")
+df_ratings   <- dbGetQuery(con, "SELECT * FROM ratings")
+```
+
+## Glimpse the Data Frames
+
+Let's make sure our data frames were properly loaded.
+
+```{r glimpse data frames}
+glimpse(df_movies)
+glimpse(df_takers)
+glimpse(df_ratings)
+```
+
+## Closing the Connection
+
+We must make sure to close the connection.
+
+```{r diconnect}
+dbDisconnect(con)
+```
